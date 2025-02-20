@@ -32,10 +32,16 @@ export async function POST(req: Request) {
     return NextResponse.json({
       description: response.choices[0]?.message?.content?.trim() || "",
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("API Error:", error);
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: "Something went wrong", details: error.message },
+        { status: 500 }
+      );
+    }
     return NextResponse.json(
-      { error: "Something went wrong", details: error.message },
+      { error: "Something went wrong" },
       { status: 500 }
     );
   }
