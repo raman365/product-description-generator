@@ -1,101 +1,106 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { FaSpinner, FaCopy, FaCheck } from "react-icons/fa";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [productName, setProductName] = useState("");
+  const [features, setFeatures] = useState("");
+  const [description, setDescription] = useState("");
+  const [style, setStyle] = useState("seo");
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const generateDescription = async () => {
+    setLoading(true);
+    setDescription("");
+
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productName, features, style }),
+    });
+
+    const data = await response.json();
+    setLoading(false);
+    setDescription(data.description || "Error generating description.");
+    setCopied(false);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(description);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="relative p-6 min-h-screen bg-green-50 flex flex-col items-center">
+      {/* Title */}
+      <h1 className="text-3xl text-center font-bold text-emerald-700">*Company image* <br/>AI Product Description Generator</h1>
+
+      {/* Input Container */}
+      <div className="w-full max-w-lg bg-white p-6 rounded-lg shadow-md mt-6 border border-green-200 z-10">
+        <label className="block text-emerald-700 font-medium">Product Name</label>
+        <input
+          type="text"
+          className="w-full p-2 border border-emerald-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          placeholder="Enter product name"
+          value={productName}
+          onChange={(e) => setProductName(e.target.value)}
+        />
+
+        <label className="block text-emerald-700 font-medium mt-4">Key Features</label>
+        <textarea
+          className="w-full p-2 border border-emerald-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          placeholder="E.g., Waterproof, Bluetooth 5.0, 10-hour battery life"
+          value={features}
+          onChange={(e) => setFeatures(e.target.value)}
+        />
+
+        <label className="block text-emerald-700 font-medium mt-4">Writing Style</label>
+        <select
+          className="w-full p-2 border border-emerald-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          value={style}
+          onChange={(e) => setStyle(e.target.value)}
+        >
+          <option value="seo">SEO Optimized</option>
+          <option value="casual">Casual</option>
+          <option value="professional">Professional</option>
+        </select>
+
+        <button
+          onClick={generateDescription}
+          disabled={loading}
+          className="w-full bg-emerald-600 text-white font-medium py-2 px-4 rounded mt-4 hover:bg-emerald-700 transition flex justify-center items-center"
+        >
+          {loading ? (
+            <>
+              <FaSpinner className="animate-spin mr-2" /> Generating...
+            </>
+          ) : (
+            "Generate Description"
+          )}
+        </button>
+      </div>
+
+      {/* Description Output */}
+      {description && (
+        <div className="mt-6 p-4 bg-white shadow-md rounded-lg max-w-lg w-full border border-green-200 relative z-10">
+          <div className="absolute top-2 right-2 flex items-center space-x-2">
+            <button
+              onClick={copyToClipboard}
+              className="text-gray-500 hover:text-emerald-600 transition"
+            >
+              {copied ? <FaCheck className="text-emerald-600" /> : <FaCopy />}
+            </button>
+            {copied && <span className="text-sm text-emerald-600">Copied!</span>}
+          </div>
+          
+          <h2 className="text-lg font-bold text-emerald-800">Generated Description:</h2>
+          <ReactMarkdown className="prose mt-2 text-gray-700">{description}</ReactMarkdown>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
     </div>
   );
 }
