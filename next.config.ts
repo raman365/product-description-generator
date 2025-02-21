@@ -1,11 +1,7 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  output: "export", // This enables static export
-  basePath: "/product-description-generator", // Replace with your GitHub repo name
-  reactStrictMode: true,
-  env: {
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-  },
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
 };
 
-module.exports = nextConfig;
+export default nextConfig;
