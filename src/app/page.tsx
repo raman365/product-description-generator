@@ -44,7 +44,7 @@ export default function Home() {
         <label className="block text-emerald-700 font-medium">Product Name</label>
         <input
           type="text"
-          className="w-full p-2 border border-emerald-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          className="w-full text-black p-2 border border-emerald-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
           placeholder="Enter product name"
           value={productName}
           onChange={(e) => setProductName(e.target.value)}
@@ -52,7 +52,7 @@ export default function Home() {
 
         <label className="block text-emerald-700 font-medium mt-4">Key Features</label>
         <textarea
-          className="w-full p-2 border border-emerald-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          className="w-full text-black p-2 border border-emerald-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
           placeholder="E.g., Waterproof, Bluetooth 5.0, 10-hour battery life"
           value={features}
           onChange={(e) => setFeatures(e.target.value)}
@@ -60,7 +60,7 @@ export default function Home() {
 
         <label className="block text-emerald-700 font-medium mt-4">Writing Style</label>
         <select
-          className="w-full p-2 border border-emerald-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
+          className="w-full text-black bg-white p-2 border border-emerald-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-emerald-400"
           value={style}
           onChange={(e) => setStyle(e.target.value)}
         >
