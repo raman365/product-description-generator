@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     const response = await openai.chat.completions.create({
       // ✅ Correct API call
-      model: "gpt-4o-mini", // Use your desired model
+      model: "gpt-4.1-mini", // Use your desired model
       messages: [{ role: "user", content: prompt }],
       max_tokens: 500,
     });
